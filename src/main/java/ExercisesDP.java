@@ -1,5 +1,5 @@
 
-public class ExcercisesDP {
+public class ExercisesDP {
 
 	public static long binomial(int N, int K) {
 		return 0;

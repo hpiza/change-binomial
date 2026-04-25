@@ -23,7 +23,7 @@ public class TestExcercisesDP {
 	void case01_change_small() {
 		int[] coins = { 1, 4, 6 };
 		int amount = 13;
-		assertEquals(3, ExercisesDPsolved.change(coins, amount));
+		assertEquals(3, ExercisesDP.change(coins, amount));
 	}
 
 	@Test
@@ -32,7 +32,7 @@ public class TestExcercisesDP {
 	void case02_change_small() {
 		int[] coins = { 1, 4, 6 };
 		int amount = 22;
-		assertEquals(4, ExercisesDPsolved.change(coins, amount));
+		assertEquals(4, ExercisesDP.change(coins, amount));
 	}
 
 	@Test
@@ -41,7 +41,7 @@ public class TestExcercisesDP {
 	void case03_change_medium() {
 		int[] coins = { 1, 4, 6, 9, 13 };
 		int amount = 59;
-		assertEquals(6, ExercisesDPsolved.change(coins, amount));
+		assertEquals(6, ExercisesDP.change(coins, amount));
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class TestExcercisesDP {
 	void case04_change_medium() {
 		int[] coins = { 1, 4, 6, 9, 13 };
 		int amount = 98;
-		assertEquals(9, ExercisesDPsolved.change(coins, amount));
+		assertEquals(9, ExercisesDP.change(coins, amount));
 	}
 
 	@Test
@@ -59,9 +59,8 @@ public class TestExcercisesDP {
 	void case05_change_big() {
 		int[] coins = { 1, 4, 6, 9, 13, 17, 24, 30 };
 		int amount = 523;
-		assertEquals(18, ExercisesDPsolved.change(coins, amount));
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(18, ExercisesDPsolved.change(coins, amount));
+			assertEquals(18, ExercisesDP.change(coins, amount));
 		});
 	}
 
@@ -72,7 +71,7 @@ public class TestExcercisesDP {
 		int[] coins = { 1, 4, 6, 9, 13, 17, 24, 30, 40, 65, 80 };
 		int amount = 4999;
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(64, ExercisesDPsolved.change(coins, amount));
+			assertEquals(64, ExercisesDP.change(coins, amount));
 		});
 	}
 
@@ -83,7 +82,7 @@ public class TestExcercisesDP {
 		int[] coins = { 1, 4, 6, 9, 13, 17, 24, 30, 40, 65, 80, 95, 150, 200, 300, 450, 500, 800 };
 		int amount = 9999;
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(15, ExercisesDPsolved.change(coins, amount));
+			assertEquals(15, ExercisesDP.change(coins, amount));
 		});
 	}
 	
@@ -94,7 +93,7 @@ public class TestExcercisesDP {
 		int[] coins = { 1, 4, 6, 9, 13, 17, 24, 30, 40, 65, 80, 95, 150, 200, 300, 450, 500, 800, 900, 1000 };
 		int amount = 19999;
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(22, ExercisesDPsolved.change(coins, amount));
+			assertEquals(22, ExercisesDP.change(coins, amount));
 		});
 	}
 	
@@ -102,28 +101,28 @@ public class TestExcercisesDP {
 	@Order(4)
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case09_binomial_small() {
-		assertEquals(10, ExercisesDPsolved.binomial(5, 3));
+		assertEquals(10, ExercisesDP.binomial(5, 3));
 	}
 
 	@Test
 	@Order(4)
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case10_binomial_small() {
-		assertEquals(21, ExercisesDPsolved.binomial(7, 5));
+		assertEquals(21, ExercisesDP.binomial(7, 5));
 	}
 
 	@Test
 	@Order(4)
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case11_binomial_medium() {
-		assertEquals(924, ExercisesDPsolved.binomial(12, 6));
+		assertEquals(924, ExercisesDP.binomial(12, 6));
 	}
 	
 	@Test
 	@Order(4)
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case12_binomial_medium() {
-		assertEquals(5005, ExercisesDPsolved.binomial(15, 9));
+		assertEquals(5005, ExercisesDP.binomial(15, 9));
 	}
 	
 	@Test
@@ -131,7 +130,7 @@ public class TestExcercisesDP {
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case13_binomial_big() {
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(67_863_915, ExercisesDPsolved.binomial(29, 16));
+			assertEquals(67_863_915, ExercisesDP.binomial(29, 16));
 		});
 	}
 	
@@ -140,7 +139,7 @@ public class TestExcercisesDP {
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case14_binomial_big() {
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(1_855_967_520, ExercisesDPsolved.binomial(34, 19));
+			assertEquals(1_855_967_520, ExercisesDP.binomial(34, 19));
 		});
 	}
 	
@@ -149,7 +148,7 @@ public class TestExcercisesDP {
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case15_binomial_huge() {
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(513_791_607_420L, ExercisesDPsolved.binomial(42, 20));
+			assertEquals(513_791_607_420L, ExercisesDP.binomial(42, 20));
 		});
 	}
 	
@@ -158,7 +157,7 @@ public class TestExcercisesDP {
 	@Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
 	void case16_binomial_huge() {
 		assertTimeoutPreemptively(MAX_DURATION, () -> {
-			assertEquals(495_918_532_948_104L, ExercisesDPsolved.binomial(52, 26));
+			assertEquals(495_918_532_948_104L, ExercisesDP.binomial(52, 26));
 		});
 	}
 }
