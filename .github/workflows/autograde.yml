@@ -1,0 +1,138 @@
+name: Java Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # -------------------------------------------------
+      # Run Maven tests and capture ALL console output
+      # -------------------------------------------------
+      - name: Run tests (capture logs)
+        run: |
+          mvn test -q > test.log || true
+
+      # -------------------------------------------------
+      # Generate GitHub Actions summary (per-test method)
+      # -------------------------------------------------
+      - name: Generate detailed test summary
+        shell: bash
+        run: |
+          REPORTS=$(find . -type f -path "*/target/surefire-reports/TEST-*.xml" || true)
+
+          echo "## ✅ Test Results" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -z "$REPORTS" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "⚠️ No Surefire test reports were found." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          # ---------------------------------------------
+          # Collect ALL test cases
+          # ---------------------------------------------
+          ALL_TESTS=$(
+            awk '
+              /<testcase / {
+                name="";
+                if (match($0, /name="([^"]+)"/, b)) name=b[1];
+                if (name) print name;
+              }
+            ' $REPORTS \
+            | sort -u || true
+          )
+
+          # ---------------------------------------------
+          # Collect FAILED test cases
+          # ---------------------------------------------
+          FAILED_TESTS=$(
+            awk '
+              /<testcase / {
+                name="";
+                if (match($0, /name="([^"]+)"/, b)) name=b[1];
+              }
+              /<failure|<error/ {
+                if (name) print name;
+              }
+            ' $REPORTS \
+            | sort -u || true
+          )
+
+          # ---------------------------------------------
+          # Passed = ALL − FAILED
+          # ---------------------------------------------
+          PASSED_TESTS=$(
+            comm -23 \
+              <(printf "%s\n" "$ALL_TESTS" | sort -u) \
+              <(printf "%s\n" "$FAILED_TESTS" | sort -u)
+          )
+
+          # ---------------------------------------------
+          # Summary output
+          # ---------------------------------------------
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### ❌ Failed Tests" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -z "$FAILED_TESTS" ]; then
+            echo "- None 🎉" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "$FAILED_TESTS" | sed 's/^/- ❌ /' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### ✅ Passed Tests" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -z "$PASSED_TESTS" ]; then
+            echo "- None" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "$PASSED_TESTS" | sed 's/^/- ✅ /' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          # ---------------------------------------------
+          # Final grade calculation (out of 10)
+          # ---------------------------------------------
+
+          TOTAL_TESTS=$(echo "$ALL_TESTS" | sed '/^$/d' | wc -l || true)
+          PASSED_COUNT=$(echo "$PASSED_TESTS" | sed '/^$/d' | wc -l || true)
+
+          if [ "$TOTAL_TESTS" -gt 0 ]; then
+            FINAL_GRADE=$(awk "BEGIN { printf \"%.1f\", ($PASSED_COUNT / $TOTAL_TESTS) * 10 }")
+          else
+            FINAL_GRADE="0.0"
+          fi
+          
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### 🎓 Final Grade" >> "$GITHUB_STEP_SUMMARY"
+          echo "Accepted tests: $PASSED_COUNT / $TOTAL_TESTS" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Final grade: $FINAL_GRADE**" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -n "$FAILED_TESTS" ]; then
+            exit 1
+          fi
+
+      # -------------------------------------------------
+      # Upload logs and reports ONLY if the job fails
+      # -------------------------------------------------
+      - name: Upload test logs and reports (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-diagnostics
+          path: |
+            test.log
+            **/target/surefire-reports
