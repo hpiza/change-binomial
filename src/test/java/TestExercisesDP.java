@@ -12,7 +12,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class TestExcercisesDP {
+public class TestExercisesDP {
 
 	private final Duration MAX_DURATION = Duration.ofSeconds(2);
 
